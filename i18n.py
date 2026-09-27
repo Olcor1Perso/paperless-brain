@@ -23,6 +23,7 @@ DEFAULT_LANG = "en"
 SUPPORTED_LANGUAGES: dict[str, str] = {
     "en": "English",
     "de": "Deutsch",
+    "fr": "Français",
 }
 
 # Per-language LLM metadata: English language name + date-format hint.
@@ -31,6 +32,7 @@ SUPPORTED_LANGUAGES: dict[str, str] = {
 LANGUAGE_META: dict[str, dict[str, str]] = {
     "en": {"name": "English", "date_format": "YYYY-MM-DD", "dt_strftime": "%Y-%m-%d %H:%M", "weekdays": "Monday Tuesday Wednesday Thursday Friday Saturday Sunday", "months": "January February March April May June July August September October November December"},
     "de": {"name": "German (Deutsch)", "date_format": "DD.MM.YYYY", "dt_strftime": "%d.%m.%Y %H:%M", "weekdays": "Montag Dienstag Mittwoch Donnerstag Freitag Samstag Sonntag", "months": "Januar Februar März April Mai Juni Juli August September Oktober November Dezember"},
+    "fr": {"name": "French (Français)", "date_format": "YYYY-MM-DD", "dt_strftime": "%Y-%m-%d %H:%M", "weekdays": "lundi mardi mercredi jeudi vendredi samedi dimanche", "months": "janvier février mars mai juin juillet août septembre octobre novembre décembre"},
 }
 
 
@@ -94,6 +96,20 @@ _LANG_MARKERS: dict[str, frozenset[str]] = {
         the and is are what when where how my mine have has with for from please
         can not but or also only this that these those of to do does did you your
         show give list about there their they it's i'm was were be been
+    """.split()),
+    "fr": frozenset("""
+        le la les un une des du de et sont
+        je tu il elle nous ils elles
+        mon ma mes ton ta tes son sa ses
+        notre nos votre leurs
+        avec pour dans sur sous par sans chez
+        peut pourrait voudrais veux
+        quel quelle quels quand comment pourquoi
+        trouve trouver cherche chercher
+        document documents facture factures
+        fichier fichiers dossier dossiers
+        aussi encore apres avant deja pas
+        voici donc c'est n'est
     """.split()),
 }
 
