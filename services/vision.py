@@ -472,6 +472,17 @@ class AnthropicVisionClient(VisionClient):
         )
 
 
+def _fallback_client():
+    from werkbank.settings_store import get
+    if get('ingest_transport') == 'openai':
+        base_url = get('ingest_server') or ''
+        model = get('ingest_model') or ''
+        if not base_url:
+            return OllamaVisionClient()
+        return OpenAICompatibleVisionClient(base_url=base_url, model=model)
+    return OllamaVisionClient()
+
+
 def build_vision_client(username: str = "", token: str = "") -> VisionClient:
     """The vision client for the model chosen in Settings > Processing.
 
@@ -488,7 +499,7 @@ def build_vision_client(username: str = "", token: str = "") -> VisionClient:
 
     name = get_ingest_model_name()
     if not name or not (username and token):
-        return OllamaVisionClient()
+        return _fallback_client()
 
     try:
         from services.model_registry import get_by_name
@@ -497,7 +508,7 @@ def build_vision_client(username: str = "", token: str = "") -> VisionClient:
     except Exception:
         entry = None
     if not entry:
-        return OllamaVisionClient()
+        return _fallback_client()
 
     model = entry.get("model") or ""
     base_url = (entry.get("base_url") or "").rstrip("/")
@@ -507,5 +518,9 @@ def build_vision_client(username: str = "", token: str = "") -> VisionClient:
         return AnthropicVisionClient(model=model, api_key=api_key, base_url=base_url)
 
     if not base_url:
+        from werkbank.settings_store import get_setting
+        transport = get_setting('INGEST_TRANSPORT', 'ollama')
+        if transport == 'openai':
+            return OpenAICompatibleVisionClient()
         return OllamaVisionClient()
     return OpenAICompatibleVisionClient(base_url=base_url, model=model, api_key=api_key)

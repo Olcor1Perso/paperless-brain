@@ -10,6 +10,7 @@ import os
 from typing import Any
 
 import chromadb
+from config.settings import settings
 from chromadb.utils import embedding_functions
 
 
@@ -319,8 +320,15 @@ class ChromaClient:
             )
         return text
 
-    @staticmethod
-    def _build_embedding_function(embedding_function):
+    def _build_embedding_function(self, embedding_function):
+        # remote = OpenAI-compatible /v1/embeddings (e.g. Fedora proxy),
+        # local = SentenceTransformer (CPU, downloads model).
+        if getattr(settings, 'embedding_backend', 'local') == 'remote':
+            return embedding_functions.OpenAIEmbeddingFunction(
+                api_key=getattr(settings, 'embedding_api_key', 'local'),
+                api_base=getattr(settings, 'embedding_base_url', ''),
+                model_name=embedding_function,
+            )
         return embedding_functions.SentenceTransformerEmbeddingFunction(
             model_name=embedding_function
         )
