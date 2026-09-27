@@ -15,6 +15,12 @@ class Settings(BaseSettings):
 
     # ChromaDB
     embedding_model: str
+
+    # Embedding backend: local = SentenceTransformer (CPU, downloads model),
+    # remote = OpenAI-compatible /v1/embeddings endpoint (e.g. Fedora proxy).
+    embedding_backend: str = "local"
+    embedding_base_url: str = "http://192.168.2.14:8090/v1"
+    embedding_api_key: str = "local"
     chroma_path: str
     chroma_collection: str
     extraction_sidecar_path: str
